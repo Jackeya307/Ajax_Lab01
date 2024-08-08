@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model IEnumerable<Address>
+@section Style {
+    <style>
+
+        .flex {
+            height: 300px;
+            overflow-y: auto;
+        }
+
+    </style>
+}
+
+
+<div>
+    <div class="m-1">
+        <h3>城市列表</h3>
+        @foreach(var item in Model.Select(Address => Address.City).Distinct()) {
+            <button class="btn btn-primary" onclick="btnClick(`@item`)">@item</button>
+        }
+    </div>
+
+    <div id="context1" class="mt-3 p-3 border rounded bg-light flex"></div>
+
+    <div class="m-1 flex">
+        <h3>鄉鎮區表</h3>
+        @foreach(var item in Model.Select(Address => Address.SiteId).Distinct()) {
+            <button class="btn btn-primary" asp-for="@item">@item</button>
+        }
+    </div>
+</div>
+
+
+<script>
+    // setTimeout(() => {
+    //     console.log('a');
+    //     setTimeout(() => {
+    //         console.log('b')
+    //         setTimeout(() => console.log('c'), 1000)
+    //     }, 2000)
+    // }, 3000)
+
+    // setTimeout(() => console.log('a'), 3000)
+    // setTimeout(() => console.log('b'), 2000)
+    // setTimeout(() => console.log('c'), 1000)
+    // function doSomething(callback) {
+    //     setTimeout(() => {
+    //         console.log('Done');
+    //         callback();
+    //     }, 1000);
+    // }
+
+    // doSomething(() => {
+    //     console.log('Next step');
+    // });
+
+    const context1 = document.querySelector('#context1');
+    function btnClick(City) {
+       
+
+            fetch(`/Home/Siteid/${City}`) // 發送 HTTP GET 請求
+            .then(response => response.json()) // 將響應體解析為 JSON 格式
+            .then(data => { // `data` 是解析後的 JSON 數據
+                const formattedData = data.join(' / '); // 將數組元素用/分隔
+                context1.innerHTML = formattedData; // 將結果顯示在 `context1` 元素中
+            });
+    }
+
+
+    async function cookingAndWashing() { //請不要閒下來
+        return new Promise(washing => setTimeout(() => { //Promise初始化可以放兩個參數 預設要執行跟例外狀況執行的方法
+            console.log('吐司考完了'); // 先烤土司 假設吐司要烤五分鐘
+            washing() // 吐司開始烤就先去刷牙洗臉
+        }, 5000)) //吐司要烤五分鐘
+    }
+
+
+    async function morning() {
+        console.log('開始烤吐司')
+        const wash = cookingAndWashing()
+        console.log('開始刷牙')
+        await wash //因為非同步等待 所以這裡會開始刷牙 吐司烤好 牙也就刷好了
+        console.log('刷完牙了');
+    }
+
+    morning(); //早上起床準備事項
+
+</script>

@@ -1,0 +1,44 @@
+﻿@section Style {
+    <script src="~/js/travel.js"></script>
+    <style>
+        .flex{
+            width:100%;
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px
+        }
+    </style>
+}
+@* <table class="card table" style="width: 18rem;">
+    <thead class="table-light">
+        <tr>
+            <th>照片</th>
+            <th>敘述</th>
+        </tr>
+    </thead>
+    <tbody class="card">
+
+    </tbody>
+</table> *@
+
+<div class="flex">
+
+</div>
+
+
+@section Scripts {
+    <script>
+        const table = document.querySelector('.flex')
+        const section = spots.CommonFormat.Section
+
+        for (let i = 0; i < section.length; i++) {
+            for (let c = 0; c < section[i].file.img.length; c++) {
+                let imgtext = section[i].file.img[c].text
+                table.innerHTML +=
+                    `
+                    <img src="${imgtext}" style="width: 24%" alt="...">
+                    `
+            }
+        }
+    </script>
+}
