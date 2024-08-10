@@ -25,7 +25,7 @@ namespace Ajax_Lab01.Controllers {
             .ToList();
 
             if(!c.Any()) {
-                return NotFound($"查無相符的{City}");
+                return NotFound();
             }
             return Json(c);
         }
@@ -41,7 +41,7 @@ namespace Ajax_Lab01.Controllers {
                 .Distinct()
                 .ToList();
             if(!c.Any()) {
-                return NotFound($"查無相符{SiteId}");
+                return NoContent();
             }
             return Json(c);
         }

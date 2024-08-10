@@ -3,19 +3,19 @@
 
 }
 
-<fieldset>
+<fieldset class="row row-cols-1">
     <legend>地址選擇</legend>
-    <form>
-        <select onchange="btnClick(event)">
-            <option selected>請選擇..</option>
+    <form class="form form-control">
+        <select class="" onchange="btnClick(event)">
+            <option value="1" selected>請選擇..</option>
             @foreach(var item in Model.Select(Address => Address.City).Distinct()) {
                 <option value="@Html.Raw(item)">@Html.Raw(item)</option>
             }
         </select>
-        <select onchange="siteChange(event)" id="siteid">
+        <select class="" onchange="siteChange(event)" id="siteid">
             <option selected>請先選擇城市</option>
         </select>
-        <select id="road" onchange="textAddress()">
+        <select class="" id="road" onchange="textAddress(event)">
             <option selected>請先選擇鄉鎮區</option>
         </select>
         <input placeholder="選擇路段後輸入詳細地址"
@@ -30,24 +30,33 @@
 
         //重新選擇城市的時候必須全空
         async function btnClick(event) {
-            address.value = ''
-            siteid.innerHTML = '<option selected>請選擇...</option>'
-            road.innerHTML = '<option selected>請先選擇鄉鎮區</option>'
+
+            address.value = ''  //每次CITY變動都清空INPUT
+            siteid.innerHTML = '<option value="1" selected>請選擇...</option>' //鄉鎮區回預設
+            road.innerHTML = '<option value="1" selected>請先選擇鄉鎮區</option>' //路也一樣
+
+            if (event.target.value === '1')  //如果city選預設值就不傳送要求
+                return
+
             const api = `@Url.Content("~/home/siteid/")${event.target.value}`
             await addressInfo(api, siteid);
 
             // for (let i = 0; i < data.length; i++) {
-            //     siteid.insertAdjacentHTML('beforeend', `<option value="${data[i]}">${data[i]}</option>`)
+            //     siteid.insertAdjacentHTML('beforeend',
+            // `<option value="${data[i]}">${data[i]}</option>`)
             // }
         }
-
 
         const road = document.querySelector('#road')
 
         //重新選擇鄉鎮區時需等於城市加新鄉鎮區
         async function siteChange(event) {
-            road.innerHTML = '<option selected>請選擇鄉鎮區</option>'
+
+            road.innerHTML = '<option value="1" selected>請選擇鄉鎮區</option>' //換了區就把路調回預設
             address.value = ''
+
+            if (event.target.value === '1') //區選預設就不傳要求
+                return
 
             const api = `@Url.Content("~/home/Road/")${event.target.value}`
             addressInfo(api, road)
@@ -58,16 +67,32 @@
             //     road.insertAdjacentHTML('beforeend', `<option value="${item}">${item}</option>`))
         }
 
+        //將地址自動填入input
         async function textAddress() {
+            if (event.target.value === '1')  //路是預設就不填入地址
+                return
+
             const allValue = Array.from(document.querySelectorAll('form>select'))
-                .map((select) => select.value)
+                .map((select) => select.value)//將全部下拉選單的值填入input
             address.value = allValue.join('')
         }
 
         async function addressInfo(api, site) {
-            const response = await fetch(api);
-            const data = await response.json();
-            data.forEach(item => site.insertAdjacentHTML('beforeend', `<option value="${item}">${item}</option>`));
+            try {
+
+                const response = await fetch(api);
+                if (!response.ok) {
+                    console.error('Api請求失敗: ', response.statusText)
+                    return;
+                }
+                const data = await response.json();
+                data.forEach(item =>
+                    site.insertAdjacentHTML('beforeend', 
+                    `<option value="${item}">${item}</option>`
+                ));
+            } catch(error) {
+                console.error('處理API時發生錯誤: ',error)
+            }
         }
         // const aborter = new AbortController()
         // const dad = aborter.signal
