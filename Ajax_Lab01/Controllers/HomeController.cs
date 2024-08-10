@@ -3,6 +3,7 @@ using Ajax_Lab01.Models;
 using Microsoft.AspNetCore.Mvc;
 
 using System.Diagnostics;
+using System.Text;
 
 namespace Ajax_Lab01.Controllers {
     public class HomeController : Controller {
@@ -17,20 +18,33 @@ namespace Ajax_Lab01.Controllers {
         [HttpGet("/Home/SiteId/{City?}")] //
         public IActionResult SiteId(string? City)
         {
-            //var c = _dbContext.Addresses.Where(Address => Address.SiteId.Contains(City)).Select(Address => Address.SiteId).Distinct().ToList();
             var c = _dbContext.Addresses
-                .Where(Address => Address.SiteId.Contains(City))
-                .Select(Address => Address.SiteId)
-                .Distinct()
-                .ToList();
-            if(!c.Any()) 
-            {
-                return NotFound("琩礚才カ珿礚猭陪ボㄤ秏马跋");
-            }
+            .Where(Address => Address.SiteId.Contains(City))
+            .Select(Address => Address.SiteId)
+            .Distinct()
+            .ToList();
 
+            if(!c.Any()) {
+                return NotFound($"琩礚才{City}");
+            }
             return Json(c);
         }
 
+
+        [HttpGet("/Home/Road/{SiteId?}")] //
+        public IActionResult Road(string? SiteId)
+        {
+            //var c = _dbContext.Addresses.Where(Address => Address.SiteId.Contains(City)).Select(Address => Address.SiteId).Distinct().ToList();
+            var c = _dbContext.Addresses
+                .Where(Address => Address.SiteId.Contains(SiteId))
+                .Select(Address => Address.Road)
+                .Distinct()
+                .ToList();
+            if(!c.Any()) {
+                return NotFound($"琩礚才{SiteId}");
+            }
+            return Json(c);
+        }
         public IActionResult Index()
         {
             var c = _dbContext.Addresses;
