@@ -1,0 +1,32 @@
+﻿
+<h1>UserPhoto</h1>
+<select asp-items="@ViewBag.MemberID" onchange="getImg(event)" ></select><br />
+<img class="img-thumbnail w-25 h-25" id="img1" />
+<br />
+<input type="file" value="上傳照片" name="userPhoto">
+@section Style {
+
+}
+@section Scripts {
+    <script>
+        const img1 = document.querySelector('#img1')
+
+        async function getImg(event) {
+            try {
+                const api = `@Url.Content("~/home/getImg/")${event.target.value}`
+                const response = await fetch(api)
+
+                if (!response.ok) {
+                    const src = `@Url.Content("~/images/noimages.png")`
+                    img1.src = src
+                    return
+                }
+
+                const data = await response.blob()
+                img1.src = URL.createObjectURL(data)
+            } catch (error) {
+                console.error('未知的錯誤原因: ' + error.message)
+            }
+        }
+    </script>
+}

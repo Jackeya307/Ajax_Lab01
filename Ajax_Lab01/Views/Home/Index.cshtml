@@ -1,33 +1,60 @@
 ﻿@model IEnumerable<Address>
-@section Style {
 
-}
+<h2>會員註冊</h2>
+<form id="UserInfo">
+    @* <div id="addressSelect">
+    <div class="mb-3">
+    <select class="" onchange="btnClick(event)">
+    <option value="1" selected>請選擇..</option>
+    @foreach(var item in Model.Select(Address => Address.City).Distinct()) {
+    <option value="@Html.Raw(item)">@Html.Raw(item)</option>
+    }
+    </select>
+    </div>
+    <div class="mb-3">
+    <select class="" onchange="siteChange(event)" id="siteid">
+    <option selected>請先選擇城市</option>
+    </select>
+    </div>
+    <div class="mb-3">
+    <select class="" id="road" onchange="textAddress(event)">
+    <option selected>請先選擇鄉鎮區</option>
+    </select>
+    </div>
+    <div class="mb-3 w-50">
+    <input placeholder="選擇路段後輸入詳細地址"
+    class="text form-control-plaintext border border-primary" id="address" />
+    </div>
+    </div> *@
+    <div class="form-floating mb-3 w-25">
+        <input type="text" class="form-control" id="UserName" name="Name" placeholder="姓名">
+        <label class="text-secondary" for="UserName">姓名</label>
+    </div>
+    <div class="form-floating mb-3 w-25">
+        <input type="password" class="form-control" id="Password" name="Password" placeholder="密碼">
+        <label class="text-secondary" for="Password">密碼</label>
+    </div>
+    <div class="form-floating mb-3 w-25">
+        <input type="email" class="form-control" id="Email" name="Email" placeholder="name@example.com">
+        <label class="text-secondary" for="Email">Email</label>
+    </div>
+    <div class="form-floating mb-3 w-25">
+        <input type="number" class="form-control" id="Age" name="Age" placeholder="年齡">
+        <label class="text-secondary" for="Age">年齡</label>
+    </div>
+    <div class="mb-3 w-25">
+        <img class="img-thumbnail" id="img1"/>
+        <br />
+        <input onchange="ImgUpload(event)" type="file" name="UserPhoto">
+    </div>
+</form>
+<button onclick="submitInfo()">提交</button>
 
-<fieldset class="row row-cols-1">
-    <legend>地址選擇</legend>
-    <form class="form form-control">
-        <select class="" onchange="btnClick(event)">
-            <option value="1" selected>請選擇..</option>
-            @foreach(var item in Model.Select(Address => Address.City).Distinct()) {
-                <option value="@Html.Raw(item)">@Html.Raw(item)</option>
-            }
-        </select>
-        <select class="" onchange="siteChange(event)" id="siteid">
-            <option selected>請先選擇城市</option>
-        </select>
-        <select class="" id="road" onchange="textAddress(event)">
-            <option selected>請先選擇鄉鎮區</option>
-        </select>
-        <input placeholder="選擇路段後輸入詳細地址"
-               class="text form-control-plaintext border border-primary" name="address" id="address" />
-        <button type="submit">提交</button>
-    </form>
-</fieldset>
 @section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
     <script>
         const siteid = document.querySelector('#siteid')
         const address = document.querySelector('#address')
-
         //重新選擇城市的時候必須全空
         async function btnClick(event) {
 
@@ -51,7 +78,6 @@
 
         //重新選擇鄉鎮區時需等於城市加新鄉鎮區
         async function siteChange(event) {
-
             road.innerHTML = '<option value="1" selected>請選擇鄉鎮區</option>' //換了區就把路調回預設
             address.value = ''
 
@@ -72,7 +98,7 @@
             if (event.target.value === '1')  //路是預設就不填入地址
                 return
 
-            const allValue = Array.from(document.querySelectorAll('form>select'))
+            const allValue = Array.from(document.querySelectorAll('#addressSelect select'))
                 .map((select) => select.value)//將全部下拉選單的值填入input
             address.value = allValue.join('')
         }
@@ -87,13 +113,60 @@
                 }
                 const data = await response.json();
                 data.forEach(item =>
-                    site.insertAdjacentHTML('beforeend', 
-                    `<option value="${item}">${item}</option>`
-                ));
-            } catch(error) {
-                console.error('處理API時發生錯誤: ',error)
+                    site.insertAdjacentHTML('beforeend',
+                        `<option value="${item}">${item}</option>`
+                    ));
+            } catch (error) {
+                console.error('處理API時發生錯誤: ', error)
             }
         }
+
+        const UserInfo = document.querySelector('#UserInfo')
+
+        async function submitInfo() {
+            try {
+                const formData = new FormData(UserInfo)
+                const api = `@Url.Content("~/home/register/")`
+                const response = await fetch(api, {
+                    method: 'POST',
+                    body: formData
+                })
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('錯誤詳細信息:', errorData);
+                    return;
+                }
+
+                const data = await response.json()
+                alert(data)
+
+            } catch (error) {
+                alert(error.message)
+            }
+        }
+        const img1 = document.querySelector('#img1')
+        async function ImgUpload(event) {
+
+            const selectFile = event.target.files[0]
+            const imageType = /image.*/
+
+            if (!selectFile.type.match(imageType) || selectFile.length === 0) {
+                event.target.value = ''
+                alert('請選擇圖片')
+                img1.src = ''
+                return
+            }
+
+            const reader = new FileReader()
+
+            reader.readAsDataURL(selectFile)
+            reader.addEventListener('load', () => {
+                img1.src = reader.result
+            })
+        }
+    </script>
+    <script>
         // const aborter = new AbortController()
         // const dad = aborter.signal
         // function btnClick(Event) {
@@ -109,8 +182,7 @@
         // }
         // aborter.abort()
 
-    </script>
-    <script>
+    
         // setTimeout(() => {
         //     console.log('a');
         //     setTimeout(() => {
@@ -140,8 +212,7 @@
         //         console.log(array)
         //     })
         // })()
-    </script>
-    <script>
+
         // async function cookingAndWashing() { //請不要閒下來
         //     return new Promise(washing => setTimeout(() => { //Promise初始化可以放兩個參數 預設要執行跟例外狀況執行的方法
         //         console.log('吐司考完了'); // 先烤土司 假設吐司要烤五分鐘
