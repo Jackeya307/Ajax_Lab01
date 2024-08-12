@@ -1,7 +1,11 @@
 using Ajax_Lab01.Models;
+using Ajax_Lab01.Models.DTO;
 using Ajax_Lab01.ViewModels;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.IdentityModel.Tokens;
+
 using System.Diagnostics;
 
 namespace Ajax_Lab01.Controllers {
@@ -129,6 +133,49 @@ namespace Ajax_Lab01.Controllers {
                 });
 
             }
+        }
+
+        [HttpPost]
+        public IActionResult Spots([FromBody] SearchDTO searchDTO)
+        {
+            try {
+                var spot = searchDTO.categoryId == 0 ? _dbContext.SpotImagesSpots : _dbContext.SpotImagesSpots
+                                                                                .Where(c => c.CategoryId == searchDTO.categoryId);
+                if(!string.IsNullOrEmpty(searchDTO.keyword))
+                    spot = _dbContext.SpotImagesSpots.Where(c => c.SpotTitle.Contains(searchDTO.keyword) ||
+                    c.SpotDescription.Contains(searchDTO.keyword));
+
+                switch(searchDTO.sortBy) {
+                    case "spotTitle":
+                    spot = searchDTO.sortType == "asc" ? spot.OrderBy(s => s.SpotTitle) :
+                                                         spot.OrderByDescending(s => s.SpotTitle);
+                    break;
+                    default:
+                    spot = searchDTO.sortType == "asc" ? spot.OrderBy(s => s.SpotId) :
+                                                         spot.OrderByDescending(s => s.SpotId);
+                    break;
+                }
+                // 總筆數/一頁大小並無條件進位  
+                int dataCount = spot.Count();
+                int PagesSize = searchDTO.pageSize ?? 9;
+                int Page = searchDTO.page ?? 1;
+                int TotalPages = (int)Math.Ceiling((decimal)(dataCount / PagesSize));
+                //跳過幾筆資料 意思是指定頁-1後*一頁大小
+                spot = spot.Skip((Page - 1) * PagesSize).Take(PagesSize);
+                SpotsPagingDTO pagingDTO = new SpotsPagingDTO();
+                pagingDTO.TotalPages = TotalPages;
+                pagingDTO.SpotsResult = spot.ToList();
+                return Json(pagingDTO);
+            }
+            catch(Exception ex) {
+                throw new Exception(ex.Message,ex);
+            }
+
+        }
+        public IActionResult travel()
+        {
+            var c = _dbContext.Categories;
+            return View(c);
         }
 
         [ResponseCache(Duration = 0,Location = ResponseCacheLocation.None,NoStore = true)]

@@ -1,0 +1,156 @@
+﻿@model IEnumerable<Category>
+@{
+    ViewData["Title"] = "旅遊景點";
+}
+
+<h1>旅遊景點</h1>
+<div class="row mb-3">
+    <div class="col-2">
+        <select class="form-select" aria-label="Default select example" onchange="changePageSize(this)">
+            <option selected>請選擇...</option>
+            <option value="1">每頁1筆資料</option>
+            <option value="2">每頁2筆資料</option>
+            <option value="3">每頁3筆資料</option>
+            <option value="4">每頁4筆資料</option>
+            <option value="5">每頁5筆資料</option>
+            <option value="6">每頁6筆資料</option>
+            <option value="7">每頁7筆資料</option>
+            <option value="8">每頁8筆資料</option>
+            <option value="9">每頁9筆資料</option>
+        </select>
+    </div>
+    <div class="col-5">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination" id="ul1">
+            </ul>
+        </nav>
+    </div>
+    <div class="col-2">
+        <select class="form-select" aria-label="Default select example" onchange="changeSort(this)">
+            <option value="0" selected>景點編號升冪</option>
+            <option value="1">景點編號降冪</option>
+            <option value="2">文章標題升冪</option>
+            <option value="3">文章標題降冪</option>
+        </select>
+    </div>
+    <div class="col-3">
+        <input type="search" class="form-control" placeholder="請輸入景點" onkeydown="inputKeyword(event)" />
+    </div>
+</div>
+<div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex flex-wrap">
+                @foreach(var item in Model) {
+                    <button class="btn btn-outline-primary me-2 mb-2" onclick="filterData(@item.CategoryId)">@item.CategoryName</button>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-3 g-4" id="div1">
+</div>
+@section Style {
+
+}
+
+@section Scripts {
+    <script>
+        const searchDto = {
+            "categoryId": 0,
+            "keyword": "",
+            "page": 1,
+            "pageSize": 9,
+            "sortType": "",
+            "sortBy": ""
+        }
+        const spotsInfo = document.querySelector('#div1')
+        const liPages = document.querySelector('#ul1')
+        const load = async () => {
+            try {
+
+                const api = `@Url.Content("~/Home/spots")`
+                const response = await fetch(api, {
+                    method: 'post',
+                    body: JSON.stringify(searchDto),
+                    headers: {
+                        'Content-Type': 'Application/json'
+                    }
+                })
+
+                if (!response.ok) {
+                    console.log('獲取api失敗: ' + await response.statusText)
+                    return
+                }
+                const data = await response.json()
+
+                const spots = data.spotsResult.map(spot => {
+                    const { spotTitle, spotDescription, address, spotImage, spotId, categoryId } = spot
+                    return `<div class="col">
+                                                                                <div class="card h-100">
+                                                                                    <img src="${spotImage}" class="card-img-top" alt="${spotDescription}">
+                                                                                    <div class="card-body">
+                                                                                        <h5 class="card-title">${spotTitle}</h5>
+                                                                                        <p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100) + '...'}</p>
+                                                                                    </div>
+                                                                                    <div class="card-footer">
+                                                                                        <small class="text-body-secondary">${spotId}${address}</small>
+                                                                                    </div>
+                                                                                </div>
+                                                                               </div>`
+                })
+
+                spotsInfo.innerHTML = spots.join('')
+                
+
+                console.log(data.totalPages) // 確認這裡的數值是正確的
+                console.log(data.spotsResult)
+
+                let strPageLi = ''
+                let max = data.totalPages
+                max = data.totalPages >= 10 ? 10 : data.totalPages
+                console.log(max)
+                for (let i = 1; i <= max; i++) {
+
+                    strPageLi += `
+                                <li class="page-item"><a class="page-link" onclick="clickPages(${i})">${i}</a></li>
+                                `
+                }
+                liPages.innerHTML = strPageLi
+            } catch (error) {
+                console.log('前端獲取api發生例外的錯誤: ' + error)
+            }
+        }
+
+        load()
+
+        const inputKeyword = event => {
+            if (event.key !== 'Enter')
+                return
+            searchDto.keyword = event.target.value
+            load()
+        }
+
+        const clickPages = page => {
+            searchDto.page = page
+            load()
+        }
+
+        const changePageSize = () => {
+            searchDto.pageSize = this.value
+            load()
+        }
+
+        const filterData = categoryId => {
+            searchDto.categoryId = categoryId
+            load()
+        }
+        //#1待完成
+        const changeSort = () => {
+            searchDto.sortBy =''
+            load()
+        }
+    </script>
+}
