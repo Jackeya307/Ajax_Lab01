@@ -6,8 +6,7 @@
 <h1>旅遊景點</h1>
 <div class="row mb-3">
     <div class="col-2">
-        <select class="form-select" aria-label="Default select example" onchange="changePageSize(this)">
-            <option selected>請選擇...</option>
+        <select class="form-select" aria-label="Default select example" onchange="changePageSize(event)">
             <option value="1">每頁1筆資料</option>
             <option value="2">每頁2筆資料</option>
             <option value="3">每頁3筆資料</option>
@@ -16,7 +15,7 @@
             <option value="6">每頁6筆資料</option>
             <option value="7">每頁7筆資料</option>
             <option value="8">每頁8筆資料</option>
-            <option value="9">每頁9筆資料</option>
+            <option selected value="9">每頁9筆資料</option>
         </select>
     </div>
     <div class="col-5">
@@ -26,11 +25,11 @@
         </nav>
     </div>
     <div class="col-2">
-        <select class="form-select" aria-label="Default select example" onchange="changeSort(this)">
-            <option value="0" selected>景點編號升冪</option>
-            <option value="1">景點編號降冪</option>
-            <option value="2">文章標題升冪</option>
-            <option value="3">文章標題降冪</option>
+        <select class="form-select" aria-label="Default select example" onchange="changeSort(event)">
+            <option value="ascspotId" selected>景點編號升冪</option>
+            <option value="spotId">景點編號降冪</option>
+            <option value="ascspotTitle">文章標題升冪</option>
+            <option value="spotTitle">文章標題降冪</option>
         </select>
     </div>
     <div class="col-3">
@@ -38,13 +37,12 @@
     </div>
 </div>
 <div>
-    <div class="row mb-4">
+    <div class="row mb-3">
         <div class="col-12">
-            <div class="d-flex flex-wrap">
+            <div class="d-flex flex-wrap flexcontent">
                 @foreach(var item in Model) {
-                    <button class="btn btn-outline-primary me-2 mb-2" onclick="filterData(@item.CategoryId)">@item.CategoryName</button>
+                    <button class="btn btn-gradient me-1 mb-2 large-btn" onclick="filterData(@item.CategoryId)">@item.CategoryName</button>
                 }
-
             </div>
         </div>
     </div>
@@ -52,8 +50,12 @@
 
 <div class="row row-cols-1 row-cols-md-3 g-4" id="div1">
 </div>
+<h3 class="m-3 ">共計</h3>
 @section Style {
-
+    <link href="~/css/mystyle.css" rel="stylesheet" />
+    <style>
+        
+    </style>
 }
 
 @section Scripts {
@@ -63,14 +65,13 @@
             "keyword": "",
             "page": 1,
             "pageSize": 9,
-            "sortType": "",
-            "sortBy": ""
+            "sortType": "asc",
+            "sortBy": "SpotId"
         }
         const spotsInfo = document.querySelector('#div1')
         const liPages = document.querySelector('#ul1')
         const load = async () => {
             try {
-
                 const api = `@Url.Content("~/Home/spots")`
                 const response = await fetch(api, {
                     method: 'post',
@@ -86,39 +87,12 @@
                 }
                 const data = await response.json()
 
-                const spots = data.spotsResult.map(spot => {
-                    const { spotTitle, spotDescription, address, spotImage, spotId, categoryId } = spot
-                    return `<div class="col">
-                                                                                <div class="card h-100">
-                                                                                    <img src="${spotImage}" class="card-img-top" alt="${spotDescription}">
-                                                                                    <div class="card-body">
-                                                                                        <h5 class="card-title">${spotTitle}</h5>
-                                                                                        <p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100) + '...'}</p>
-                                                                                    </div>
-                                                                                    <div class="card-footer">
-                                                                                        <small class="text-body-secondary">${spotId}${address}</small>
-                                                                                    </div>
-                                                                                </div>
-                                                                               </div>`
-                })
+                const spots = getSpots(data) //將資料加工後取出
 
                 spotsInfo.innerHTML = spots.join('')
-                
+                judgePages(data)
 
-                console.log(data.totalPages) // 確認這裡的數值是正確的
-                console.log(data.spotsResult)
 
-                let strPageLi = ''
-                let max = data.totalPages
-                max = data.totalPages >= 10 ? 10 : data.totalPages
-                console.log(max)
-                for (let i = 1; i <= max; i++) {
-
-                    strPageLi += `
-                                <li class="page-item"><a class="page-link" onclick="clickPages(${i})">${i}</a></li>
-                                `
-                }
-                liPages.innerHTML = strPageLi
             } catch (error) {
                 console.log('前端獲取api發生例外的錯誤: ' + error)
             }
@@ -129,7 +103,10 @@
         const inputKeyword = event => {
             if (event.key !== 'Enter')
                 return
+
             searchDto.keyword = event.target.value
+            searchDto.page = 1
+
             load()
         }
 
@@ -138,19 +115,95 @@
             load()
         }
 
-        const changePageSize = () => {
-            searchDto.pageSize = this.value
+        const changePageSize = event => {
+            searchDto.page = 1
+            searchDto.pageSize = event.target.value
             load()
         }
 
         const filterData = categoryId => {
+            searchDto.page = 1
+
             searchDto.categoryId = categoryId
             load()
         }
-        //#1待完成
-        const changeSort = () => {
-            searchDto.sortBy =''
+
+        const changeSort = (event) => {
+            const selectValue = event.target.value
+
+            const sortType = selectValue.includes('asc') ? 'asc' : 'desc'
+            searchDto.sortType = sortType
+
+            // if (!selectValue.includes('asc'))
+            //     searchDto.sortType = 'desc'
+            // else {
+            //     searchDto.sortType = 'asc'
+            // }
+
+            const sortBy = selectValue.replace('asc', '')
+            searchDto.sortBy = sortBy
+
             load()
+        }
+
+        function getSpots(data) {
+            return data.spotsResult.map(spot =>createSpots(spot))
+        }
+
+        function createSpots(spot) {
+            const { spotTitle, spotDescription, address, spotImage, spotId, categoryId } = spot
+            return `
+            <div class="col h-25">
+                <div class="card  ">
+                    <img src="${spotImage}" class="card-img-top imgPx" alt="${spotDescription}">
+                    <div class="card-body">
+                        <h5 class="card-title">${spotTitle}</h5>
+                        <p class="card-text">${spotDescription.length <= 100 ? spotDescription : spotDescription.substring(0, 100) + '...'}</p>
+                    </div>
+                    <div class="card-footer">
+                        <span class="spot-info">${spotId} ${address}</span>
+                    </div>
+                </div>
+            </div>`
+        }
+
+        function judgePages(data) {
+            let strPageLi = ''
+            let totalPages = data.totalPages
+            let curretPages = searchDto.page
+            //總頁超過十 選取頁低於總頁10就全部顯示
+            if (totalPages <= 10) {
+                strPageLi = allPages(1, totalPages)
+
+            } else if (curretPages <= 5) { //超過10頁就用...分隔顯示最後一頁 且當前頁小於4就不顯示...分隔
+
+                strPageLi += allPages(1, 10)
+                strPageLi += `...
+                                <li class="page-item"><a class="page-link" onclick="clickPages(${totalPages})">${totalPages}</a></li>`
+            } else if (totalPages - curretPages >= 5) { //當前頁超過3 小於34
+                strPageLi = `<li class="page-item"><a class="page-link" onclick="clickPages(1)">1</a></li>...`
+                strPageLi += allPages(curretPages - 4, curretPages + 4)
+                strPageLi += `...
+                            <li class="page-item"><a class="page-link" onclick="clickPages(${totalPages})">${totalPages}</a></li>`
+            } else {
+                strPageLi = `<li class="page-item"><a class="page-link" onclick="clickPages(1)">1</a></li>...`
+                strPageLi += allPages(totalPages - 8, totalPages)
+            }
+
+            liPages.innerHTML = strPageLi
+            $('h3').text(`共計有${data.totalCount}筆資料，現在是${curretPages}/${totalPages}頁`);
+
+        }
+
+        function allPages(start, end) {
+            let PageLi = ''
+
+            for (let i = start; i <= end; i++) {
+                PageLi += `
+                <li class="page-item"><a class="page-link" onclick="clickPages(${i})">${i}</a></li>
+                `
+            }
+            return PageLi
         }
     </script>
 }

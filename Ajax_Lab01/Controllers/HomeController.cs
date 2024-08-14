@@ -157,12 +157,14 @@ namespace Ajax_Lab01.Controllers {
                 }
                 // 總筆數/一頁大小並無條件進位  
                 int dataCount = spot.Count();
+                
                 int PagesSize = searchDTO.pageSize ?? 9;
                 int Page = searchDTO.page ?? 1;
-                int TotalPages = (int)Math.Ceiling((decimal)(dataCount / PagesSize));
+                int TotalPages = (int)Math.Ceiling(((decimal)dataCount / PagesSize));
                 //跳過幾筆資料 意思是指定頁-1後*一頁大小
                 spot = spot.Skip((Page - 1) * PagesSize).Take(PagesSize);
                 SpotsPagingDTO pagingDTO = new SpotsPagingDTO();
+                pagingDTO.TotalCount = dataCount;
                 pagingDTO.TotalPages = TotalPages;
                 pagingDTO.SpotsResult = spot.ToList();
                 return Json(pagingDTO);

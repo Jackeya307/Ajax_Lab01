@@ -1,0 +1,51 @@
+﻿.large-btn {
+    font-size: 1.2rem; /* 調整這個值來變更字體大小 */
+    padding: 1.2rem 1.2rem /* 調整這個值來變更內邊距 */
+}
+
+.flexcontent {
+    justify-content: space-between;
+}
+
+.btn-gradient {
+    background: linear-gradient(45deg, #ff6b6b, #f7d794);
+    color: white;
+    border: none;
+}
+
+body {
+    background: linear-gradient(135deg, #f3f4f6, #e5e5e5);
+    background: url('https://www.transparenttextures.com/patterns/black-linen.png');
+}
+
+.btn-gradient:hover {
+    background: linear-gradient(45deg, #ff4757, #ff6b6b);
+}
+
+.card {
+    background-color: #f8f9fa; /* 淺灰色背景 */
+    border: 1px solid #dee2e6; /* 淺灰色邊框 */
+    border-radius: 8px; /* 圓角 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 輕微陰影 */
+}
+
+.card-body {
+    color: #343a40; /* 深藍色文字 */
+}
+
+.card-title {
+    color: #007bff; /* 藍色標題文字 */
+}
+
+.card-text {
+    color: #495057; /* 深灰色副文本 */
+}
+
+.card-footer {
+    background-color: #e9ecef; /* 淺灰色腳部 */
+}
+
+.imgPx{
+    width:414px;
+    height:311px;
+}
