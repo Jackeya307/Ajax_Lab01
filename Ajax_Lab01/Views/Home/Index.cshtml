@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Address>
+﻿@model Member
 
 <h2>會員註冊</h2>
 <form id="UserInfo">
@@ -27,8 +27,9 @@
     </div>
     </div> *@
     <div class="form-floating mb-3 w-25">
-        <input type="text" class="form-control" id="UserName" name="Name" placeholder="姓名">
-        <label class="text-secondary" for="UserName">姓名</label>
+        <input type="text" onchange="checkName()" class="form-control" asp-for="Name" placeholder="姓名">
+        <label class="text-secondary " asp-for="Name">姓名</label>
+        <p id="UserName" class="alert alert-primary"></p>
     </div>
     <div class="form-floating mb-3 w-25">
         <input type="password" class="form-control" id="Password" name="Password" placeholder="密碼">
@@ -43,7 +44,7 @@
         <label class="text-secondary" for="Age">年齡</label>
     </div>
     <div class="mb-3 w-25">
-        <img class="img-thumbnail" id="img1"/>
+        <img class="img-thumbnail" id="img1" />
         <br />
         <input onchange="ImgUpload(event)" type="file" name="UserPhoto">
     </div>
@@ -105,7 +106,6 @@
 
         async function addressInfo(api, site) {
             try {
-
                 const response = await fetch(api);
                 if (!response.ok) {
                     console.error('Api請求失敗: ', response.statusText)
@@ -165,6 +165,36 @@
                 img1.src = reader.result
             })
         }
+
+        async function checkName() {
+                let name = $('#Name').val()
+                if (name.trim()==='') {
+                    $('#UserName').text('姓名請勿空白')
+                    $('button').attr('disabled', true)
+                    return
+                }
+            try {
+
+                const api = `@Url.Content("~/home/CheckAccount/")${name}`
+                const response = await fetch(api)
+
+                if (response.ok) {
+                    $('#UserName').text('姓名無重複')
+                    $('button').attr('disabled', false)
+                } else {
+                    const errorData = await response.json();
+                    console.log(errorData)
+                    $('#UserName').text('姓名已重複')
+                    $('button').attr('disabled', true)
+                    return;
+
+                }
+
+
+            } catch (error) {
+                console.error(error.message)
+            }
+        }
     </script>
     <script>
         // const aborter = new AbortController()
@@ -182,7 +212,7 @@
         // }
         // aborter.abort()
 
-    
+
         // setTimeout(() => {
         //     console.log('a');
         //     setTimeout(() => {

@@ -9,8 +9,16 @@
       "PackagePath": "staticwebassets\\Images\\noImages.png"
     },
     {
+      "Id": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\Images\\人像 2024-06-10 232057.png",
+      "PackagePath": "staticwebassets\\Images\\人像 2024-06-10 232057.png"
+    },
+    {
       "Id": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\Images\\螢幕擷取畫面 2024-06-10 233525.png",
       "PackagePath": "staticwebassets\\Images\\螢幕擷取畫面 2024-06-10 233525.png"
+    },
+    {
+      "Id": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\css\\myStyle.css",
+      "PackagePath": "staticwebassets\\css\\myStyle.css"
     },
     {
       "Id": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\css\\site.css",

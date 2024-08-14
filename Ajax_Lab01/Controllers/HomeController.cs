@@ -54,7 +54,8 @@ namespace Ajax_Lab01.Controllers {
         }
         public IActionResult Index()
         {
-            var c = _dbContext.Addresses;
+
+            var c = new Member();
             return View(c);
         }
 
@@ -96,12 +97,32 @@ namespace Ajax_Lab01.Controllers {
                 return NotFound("發生例外的狀況 " + ex.Message);
             }
         }
+        [HttpGet("~/home/CheckAccount/{userName?}")]
+        public IActionResult CheckAccount(string? userName)
+        {
+            if(string.IsNullOrEmpty(userName)) {
+                return Json(new {
+                    error = "無效的名稱"
+                });
+            }
+
+            bool isDuplicate = _dbContext.Members.Any(a => a.Name.Equals(userName));
+            if(isDuplicate) {
+                return BadRequest(new {
+                    error = "已重複"
+                });
+            }
+
+            return Json(new {
+                message = "姓名無重複"
+            });
+        }
+
+        [HttpPost]
         public IActionResult Register(UserInfo user)
         {
-            if(user == null || user.UserPhoto == null || user.UserPhoto.Length == 0)
-                return BadRequest(new {
-                    error = "圖片或資料未填入"
-                });
+
+
             try {
                 Byte[]? data;
                 using(var memory = new MemoryStream()) {
@@ -157,7 +178,7 @@ namespace Ajax_Lab01.Controllers {
                 }
                 // 總筆數/一頁大小並無條件進位  
                 int dataCount = spot.Count();
-                
+
                 int PagesSize = searchDTO.pageSize ?? 9;
                 int Page = searchDTO.page ?? 1;
                 int TotalPages = (int)Math.Ceiling(((decimal)dataCount / PagesSize));

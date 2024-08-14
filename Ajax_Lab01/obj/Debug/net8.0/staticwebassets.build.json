@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "eG1yZpfLMxx4uzSUwhqq9HKTYAeftLbplqWP9h4aKu8=",
+  "Hash": "djEi/pWSpVqNbiT3hEbzowWy2+kigXxKE3AMgRuixDw=",
   "Source": "Ajax_Lab01",
   "BasePath": "_content/Ajax_Lab01",
   "Mode": "Default",
@@ -1195,6 +1195,25 @@
       "OriginalItemSpec": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\Ajax_Lab01.bundle.scp.css"
     },
     {
+      "Identity": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\css\\myStyle.css",
+      "SourceId": "Ajax_Lab01",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\",
+      "BasePath": "_content/Ajax_Lab01",
+      "RelativePath": "css/myStyle.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\myStyle.css"
+    },
+    {
       "Identity": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\css\\site.css",
       "SourceId": "Ajax_Lab01",
       "SourceType": "Discovered",
@@ -1250,6 +1269,25 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\Images\\noImages.png"
+    },
+    {
+      "Identity": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\Images\\人像 2024-06-10 232057.png",
+      "SourceId": "Ajax_Lab01",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\",
+      "BasePath": "_content/Ajax_Lab01",
+      "RelativePath": "Images/人像 2024-06-10 232057.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Images\\人像 2024-06-10 232057.png"
     },
     {
       "Identity": "D:\\Coding\\Ajax\\workspace\\Ajax_Lab01\\Ajax_Lab01\\wwwroot\\Images\\螢幕擷取畫面 2024-06-10 233525.png",
